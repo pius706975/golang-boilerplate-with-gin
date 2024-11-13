@@ -34,7 +34,7 @@ This project uses [Golang](https://golang.org/), [Gin](https://github.com/gin-go
 1. Copy the `.env.example` file to `.env`:
    ```bash
     APP_PORT = 
-    BASE_URL = http://localhost:<port number>/api
+    BASE_URL = http://localhost:<APP PORT>/api
     MODE = development
 
     DB_PORT = 
@@ -67,7 +67,7 @@ go run . migration -d
 
 ## API Documentation
 
-API documentation is generated using Swagger. You can access the documentation by running the server and visiting `/docs` in your browser.
+API documentation is generated using Swagger. You can access the documentation by running the server and visiting `<your base url>/docs/index.html` in your browser.
 
 ### Generating Swagger Docs
 

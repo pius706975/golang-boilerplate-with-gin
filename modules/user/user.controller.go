@@ -50,7 +50,7 @@ func (controller *userController) GetUserById(ctx *gin.Context) {
 }
 
 // GetProfile godoc
-// @Summary Get user by ID
+// @Summary Get user profile
 // @Description Fetch the user profile based on the decoded ID from access token
 // @Tags Users
 // @Accept json
