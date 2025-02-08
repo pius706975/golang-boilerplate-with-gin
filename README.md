@@ -1,7 +1,5 @@
 
-# Golang Boilerplate with Gin and GORM
-
-This is a simple Golang boilerplate with **Gin** framework with a ready-to-use configuration for backend development. You can adjust it according to your requirements.
+# PioPOS User Service
 
 ## Table of Contents
 
@@ -21,7 +19,7 @@ This project uses [Golang](https://golang.org/), [Gin](https://github.com/gin-go
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/pius706975/golang-boilerplate-with-gin.git
+   git clone https://github.com/pius-microservices/piopos-user-service.git
    ```
 
 2. Install dependencies:
@@ -34,14 +32,14 @@ This project uses [Golang](https://golang.org/), [Gin](https://github.com/gin-go
 1. Copy the `.env.example` file to `.env`:
    ```bash
     APP_PORT = 
-    BASE_URL = http://localhost:<APP PORT>/api
+    BASE_URL = http://localhost:<APP_PORT>/api/user-service
     MODE = development
 
-    DB_PORT = 
-    DB_USERNAME = 
-    DB_PASSWORD = 
-    DB_NAME = 
-    DB_HOST = 
+    USER_SERVICE_DB_PORT = 
+    USER_SERVICE_DB_USERNAME = 
+    USER_SERVICE_DB_PASSWORD = 
+    USER_SERVICE_DB_NAME = 
+    USER_SERVICE_DB_HOST = 
 
     JWT_ACCESS_TOKEN_SECRET = 
    ```
@@ -56,18 +54,9 @@ To start the application, run:
 go run . serve
 ```
 
-To run database migration, use:
-```bash
-# migrate the database models
-go run . migration -u 
-
-# drop database
-go run . migration -d
-```
-
 ## API Documentation
 
-API documentation is generated using Swagger. You can access the documentation by running the server and visiting `<your base url>/docs/index.html` in your browser.
+API documentation is generated using Swagger. You can access the documentation by running the server and visiting `<your base url>/api/user-service/docs/index.html` in your browser.
 
 ### Generating Swagger Docs
 
@@ -96,22 +85,20 @@ Here's a breakdown of the project folder structure:
   - **swagger.json** and **swagger.yaml**: Swagger specification files
 
 - **interfaces/**: Interfaces for abstracting logic
-  - **auth.interface.go** and **user.interface.go**: Define interface contracts for auth and user modules
+  - **role.interface.go** and **user.interface.go**: Define interface contracts for auth and user modules
 
 - **middlewares/**: Middleware functions for request handling
   - **auth.middleware.go**: Authorization middleware
   - **jwt.service.go**: JWT utility functions
 
 - **modules/**: Core application modules
-  - **auth/**: Authentication module
-  - **user/**: User-related functionality
-  - **other module/**
+  - **role/**: Role module
+  - **user/**: User module
 
 - **package/**: Reusable packages
   - **database/**: Database configuration, models, and migrations
     - **models/**: GORM models
     - **config.go**: Database connection configuration
-    - **migrations.go**: Database migration logic
   - **utils/**: Utility functions
 
 - **main.go**: Application entry point

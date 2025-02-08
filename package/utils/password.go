@@ -20,7 +20,7 @@ func CheckPassword(bodyPass, dbPass string) bool {
 
 	err := bcrypt.CompareHashAndPassword([]byte(dbPass), []byte(bodyPass))
 	
-	return err != nil
+	return err == nil
 }
 
 func ValidatePassword(password string) bool {

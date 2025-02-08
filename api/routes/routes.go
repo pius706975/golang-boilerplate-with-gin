@@ -1,9 +1,10 @@
 package routes
 
 import (
-	_ "go-gin/docs"
-	"go-gin/modules/auth"
-	"go-gin/modules/user"
+	_ "github.com/pius706975/golang-test/docs"
+	"github.com/pius706975/golang-test/modules/auth"
+	"github.com/pius706975/golang-test/modules/role"
+	"github.com/pius706975/golang-test/modules/user"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -27,8 +28,9 @@ func RouteApp(router *gin.Engine, db *gorm.DB) error {
 
 	router.GET(APIPrefix, homeHandler)
 
-	auth.AuthRoutesModule(router, db, APIPrefix)
+	role.RoleRoutesModule(router, db, APIPrefix)
 	user.UserRoutesModule(router, db, APIPrefix)
+	auth.AuthRoutesModule(router, db, APIPrefix)
 
 	return nil
 }
