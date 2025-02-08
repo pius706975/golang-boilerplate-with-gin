@@ -1,8 +1,10 @@
 package middlewares
 
 import (
-	envConfig "go-gin/config"
+	"fmt"
 	"time"
+
+	envConfig "github.com/pius706975/golang-test/config"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -14,10 +16,10 @@ type Claims struct {
 	jwt.RegisteredClaims
 }
 
-func NewToken(id string) *Claims {
+func NewToken(id string, expiresIn time.Duration) *Claims {
 	return &Claims{
 		UserId:           id,
-		RegisteredClaims: jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24))},
+		RegisteredClaims: jwt.RegisteredClaims{ExpiresAt: jwt.NewNumericDate(time.Now().Add(expiresIn))},
 	}
 }
 
@@ -35,7 +37,10 @@ func VerifyToken(tokenString string) (*Claims, error) {
 		return nil, err
 	}
 
-	claims := token.Claims.(*Claims)
+	claims, ok := token.Claims.(*Claims)
+	if !ok || !token.Valid {
+		return nil, fmt.Errorf("invalid token")
+	}
+
 	return claims, nil
 }
-

@@ -1,10 +1,10 @@
 package serve
 
 import (
-	"go-gin/api/routes"
-	envConfig "go-gin/config"
-	"go-gin/package/database"
-	"go-gin/package/utils"
+	"github.com/pius706975/golang-test/api/routes"
+	envConfig "github.com/pius706975/golang-test/config"
+	"github.com/pius706975/golang-test/package/database"
+	"github.com/pius706975/golang-test/package/utils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

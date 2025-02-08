@@ -1,17 +1,19 @@
 package interfaces
 
 import (
-	"go-gin/package/database/models"
+	"github.com/pius706975/golang-test/package/database/models"
 
 	"github.com/gin-gonic/gin"
 )
 
 type AuthRepo interface {
-	SignUp(userData *models.User) (*models.User, error)
 	SignIn(email string) (*models.User, error)
+	CreateRefreshToken(refreshToken *models.RefreshToken) (*models.RefreshToken, error)
+	DeleteRefreshTokenByUserId(userId string) error
+	GetRefreshToken(token string) (*models.RefreshToken, error)
 }
 
 type AuthService interface {
-	SignUp(data *models.User) (gin.H, int)
 	SignIn(data *models.User) (gin.H, int)
+	CreateNewAccessToken(refreshToken string) (gin.H, int)
 }

@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-	envConfig "go-gin/config"
+	envConfig "github.com/pius706975/golang-test/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

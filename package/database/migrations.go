@@ -1,7 +1,7 @@
 package database
 
 import (
-	"go-gin/package/database/models"
+	"github.com/pius706975/golang-test/package/database/models"
 	"log"
 
 	"github.com/spf13/cobra"
@@ -31,12 +31,12 @@ func dbMigrate(cmd *cobra.Command, args []string) error {
 
 	if migDown {
 		log.Println("Migration down done")
-		return db.Migrator().DropTable(&models.User{})
+		return db.Migrator().DropTable(&models.User{}, &models.Role{}, &models.RefreshToken{})
 	}
 
 	if migUp {
 		log.Println("Migration up done")
-		return db.AutoMigrate(&models.User{})
+		return db.AutoMigrate(&models.User{}, &models.Role{}, &models.RefreshToken{})
 	}
 
 	return nil

@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	serve "go-gin/api"
-	"go-gin/package/database"
+	serve "github.com/pius706975/golang-test/api"
+	"github.com/pius706975/golang-test/package/database"
 
 	"github.com/spf13/cobra"
 )

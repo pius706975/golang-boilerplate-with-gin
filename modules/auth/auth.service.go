@@ -1,10 +1,12 @@
 package auth
 
 import (
-	"go-gin/interfaces"
-	"go-gin/middlewares"
-	"go-gin/package/database/models"
-	"go-gin/package/utils"
+	"time"
+
+	"github.com/pius706975/golang-test/interfaces"
+	"github.com/pius706975/golang-test/middlewares"
+	"github.com/pius706975/golang-test/package/database/models"
+	"github.com/pius706975/golang-test/package/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,27 +20,8 @@ func NewService(repo interfaces.AuthRepo) *authService {
 }
 
 type tokenResponse struct {
-	Token string `json:"token"`
-}
-
-func (service *authService) SignUp(userData *models.User) (gin.H, int) {
-	hashedPassword, err := utils.HashPassword(userData.Password)
-	if err != nil {
-		return gin.H{"status": 500, "message": err.Error()}, 500
-	}
-
-	userData.Username = utils.GenerateUsername(userData.Email)
-	userData.Password = hashedPassword
-
-	newData, err := service.repo.SignUp(userData)
-	if err != nil {
-		if err.Error() == "ERROR: duplicate key value violates unique constraint \"uni_users_email\" (SQLSTATE 23505)" {
-			return gin.H{"status": 409, "message": "Email is already used"}, 409
-		}
-		return gin.H{"status": 500, "message": err.Error()}, 500
-	}
-
-	return gin.H{"data": newData}, 201
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
 }
 
 func (service *authService) SignIn(userData *models.User) (gin.H, int) {
@@ -48,17 +31,53 @@ func (service *authService) SignIn(userData *models.User) (gin.H, int) {
 		return gin.H{"status": 401, "message": "Email or password is incorrect"}, 401
 	}
 
-	if !utils.CheckPassword(user.Password, userData.Password) {
+	if !utils.CheckPassword(userData.Password, user.Password) {
 		return gin.H{"status": 401, "message": "Email or password is incorrect"}, 401
 	}
 
-	jwt := middlewares.NewToken(user.ID)
-
-	token, err := jwt.CreateToken()
+	jwt := middlewares.NewToken(user.ID, time.Minute*15)
+	accessToken, err := jwt.CreateToken()
 
 	if err != nil {
 		return gin.H{"status": 500, "message": err.Error()}, 500
 	}
 
-	return gin.H{"data": user, "accessToken": tokenResponse{Token: token}}, 200
+	refreshTokenJwt := middlewares.NewToken(user.ID, time.Hour*168)
+	refreshToken, err := refreshTokenJwt.CreateToken()
+
+	if err != nil {
+		return gin.H{"status": 500, "message": err.Error()}, 500
+	}
+
+	_ = service.repo.DeleteRefreshTokenByUserId(user.ID)
+
+	refreshTokenModel := &models.RefreshToken{
+		UserID: user.ID,
+		Token:  refreshToken,
+	}
+
+	_, err = service.repo.CreateRefreshToken(refreshTokenModel)
+	if err != nil {
+		return gin.H{"status": 500, "message": "Failed to save refresh token"}, 500
+	}
+
+	return gin.H{"data": user, "tokens": tokenResponse{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}}, 200
+}
+
+func (service *authService) CreateNewAccessToken(refreshToken string) (gin.H, int) {
+	tokenData, err := service.repo.GetRefreshToken(refreshToken)
+	if err != nil {
+		return gin.H{"status": 401, "message": "Invalid refresh token"}, 401
+	}
+
+	jwt := middlewares.NewToken(tokenData.UserID, time.Minute*15)
+	accessToken, err := jwt.CreateToken()
+	if err != nil {
+		return gin.H{"status": 500, "message": "Failed to create access token"}, 500
+	}
+
+	return gin.H{"access_token": accessToken}, 200
 }
