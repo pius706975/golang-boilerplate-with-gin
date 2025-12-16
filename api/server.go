@@ -1,11 +1,17 @@
 package serve
 
 import (
+	"context"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/pius706975/golang-test/api/routes"
 	envConfig "github.com/pius706975/golang-test/config"
 	"github.com/pius706975/golang-test/package/database"
 	"github.com/pius706975/golang-test/package/utils"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/cors"
@@ -37,29 +43,66 @@ func corsHandler() *cors.Cors {
 func serve(cmd *cobra.Command, args []string) error {
 	envCfg := envConfig.LoadConfig()
 
+	// Set Gin mode BEFORE gin.Default()
+	switch envCfg.Mode {
+	case "production":
+		gin.SetMode(gin.ReleaseMode)
+	case "staging":
+		gin.SetMode(gin.TestMode)
+	default:
+		gin.SetMode(gin.DebugMode)
+	}
+
 	errorLogger, debugLogger := utils.InitLogger()
 	debugLogger.Println("Starting server...")
-	
+
+	// Init DB
 	db, err := database.NewDB()
 	if err != nil {
-		errorLogger.Println("DB connection failed: ", err)
+		errorLogger.Println("DB connection failed:", err)
 		return err
 	}
 
-	mainRoute := gin.Default()
-	if err := routes.RouteApp(mainRoute, db); err != nil {
-		errorLogger.Println("Failed to initialize route: ", err)
+	// Router
+	router := gin.Default()
+
+	if err := routes.RouteApp(router, db); err != nil {
+		errorLogger.Println("Failed to initialize route:", err)
 		return err
 	}
 
-	c := corsHandler()
-	handler := c.Handler(mainRoute)
+	// CORS handler
+	handler := corsHandler().Handler(router)
 
-	debugLogger.Printf("Server running on port %s", envCfg.Port)
-	if err := http.ListenAndServe(":"+envCfg.Port, handler); err != nil {
-		errorLogger.Println("Failed to start server: ", err)
+	// HTTP Server
+	srv := &http.Server{
+		Addr:    ":" + envCfg.Port,
+		Handler: handler,
+	}
+
+	// Run server in goroutine
+	go func() {
+		debugLogger.Printf("Server running on port %s", envCfg.Port)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			errorLogger.Println("Server error:", err)
+		}
+	}()
+
+	// Graceful shutdown
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	<-quit
+
+	debugLogger.Println("Shutting down server...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := srv.Shutdown(ctx); err != nil {
+		errorLogger.Println("Server forced to shutdown:", err)
 		return err
 	}
 
+	debugLogger.Println("Server exited cleanly")
 	return nil
 }

@@ -54,13 +54,43 @@ This project uses [Golang](https://golang.org/), [Gin](https://github.com/gin-go
 
 ## Running the Application
 
-To start the application, run:
+### Development Mode (Hot Reload)
+This project supports **hot reload** using Air for development.
 
-```bash
-go run . serve
+#### Install Air
+
+``` bash
+go install github.com/air-verse/air@latest
 ```
 
-To run database migration, use:
+Make sure **$GOPATH/bin** is included in your PATH.
+
+#### Running the app
+``` bash
+air
+```
+
+### Production Mode
+For production, the application should be built as a binary executable.
+
+#### Build the app
+``` bash
+go build -o app
+```
+
+#### Run the server
+``` bash
+./app serve
+```
+
+This method:
+
+does not use **go run**
+does not require Go installed on the server (only the binary)
+is faster and more stable for production environments
+
+
+### Database migration
 ```bash
 # migrate the database models
 go run . migration -u 

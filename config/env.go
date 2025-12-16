@@ -25,6 +25,8 @@ type Config struct {
 	DBPassword string
 	DBName     string
 	DBHost     string
+
+	Debug string
 }
 
 var (
@@ -55,6 +57,8 @@ func LoadConfig() *Config {
 			DBPassword: os.Getenv("DB_PASSWORD"),
 			DBName:     os.Getenv("DB_NAME"),
 			DBHost:     os.Getenv("DB_HOST"),
+
+			Debug: os.Getenv("DEBUG"),
 		}
 	})
 
