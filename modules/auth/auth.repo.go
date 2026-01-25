@@ -2,7 +2,7 @@ package auth
 
 import (
 	"errors"
-	"github.com/pius706975/golang-test/package/database/models"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/database/models"
 
 	"gorm.io/gorm"
 )

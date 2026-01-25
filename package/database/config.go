@@ -2,7 +2,7 @@ package database
 
 import (
 	"fmt"
-	envConfig "github.com/pius706975/golang-test/config"
+	envConfig "github.com/pius706975/golang-boilerplate-with-gin/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -19,4 +19,16 @@ func NewDB() (*gorm.DB, error) {
 	}
 
 	return gormDb, nil
+}
+
+func GetDatabaseURL() string {
+	envCfg := envConfig.LoadConfig()
+	return fmt.Sprintf(
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		envCfg.DBUsername,
+		envCfg.DBPassword,
+		envCfg.DBHost,
+		envCfg.DBPort,
+		envCfg.DBName,
+	)
 }

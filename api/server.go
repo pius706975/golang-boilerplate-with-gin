@@ -8,10 +8,10 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/pius706975/golang-test/api/routes"
-	envConfig "github.com/pius706975/golang-test/config"
-	"github.com/pius706975/golang-test/package/database"
-	"github.com/pius706975/golang-test/package/utils"
+	"github.com/pius706975/golang-boilerplate-with-gin/api/routes"
+	envConfig "github.com/pius706975/golang-boilerplate-with-gin/config"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/database"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/utils"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/cors"
@@ -24,20 +24,29 @@ var ServeCMD = &cobra.Command{
 	RunE:  serve,
 }
 
-func corsHandler() *cors.Cors {
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"},
+func corsHandler(allowedOrigins []string) *cors.Cors {
+	return cors.New(cors.Options{
+		AllowedOrigins: allowedOrigins,
 		AllowedMethods: []string{
-			http.MethodHead,
 			http.MethodGet,
 			http.MethodPost,
 			http.MethodPut,
 			http.MethodPatch,
 			http.MethodDelete,
+			http.MethodOptions,
 		},
+		AllowedHeaders: []string{
+			"Authorization",
+			"Content-Type",
+			// "Accept",
+			// "Origin",
+			// "X-Requested-With",
+		},
+		ExposedHeaders: []string{
+			"Content-Length",
+		},
+		AllowCredentials: true,
 	})
-
-	return c
 }
 
 func serve(cmd *cobra.Command, args []string) error {
@@ -72,7 +81,7 @@ func serve(cmd *cobra.Command, args []string) error {
 	}
 
 	// CORS handler
-	handler := corsHandler().Handler(router)
+	handler := corsHandler(envCfg.AllowedOrigins).Handler(router)
 
 	// HTTP Server
 	srv := &http.Server{

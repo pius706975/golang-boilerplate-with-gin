@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github.com/pius706975/golang-test/middlewares"
+	"github.com/pius706975/golang-boilerplate-with-gin/middlewares"
 
 	"github.com/gin-gonic/gin"
 )

@@ -3,8 +3,8 @@ package utils
 import (
 	"strconv"
 
-	"github.com/pius706975/golang-test/config"
-	"github.com/pius706975/golang-test/package/database/models"
+	"github.com/pius706975/golang-boilerplate-with-gin/config"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/database/models"
 	"gopkg.in/gomail.v2"
 )
 

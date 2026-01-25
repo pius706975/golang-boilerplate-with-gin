@@ -1,10 +1,10 @@
 package routes
 
 import (
-	_ "github.com/pius706975/golang-test/docs"
-	"github.com/pius706975/golang-test/modules/auth"
-	"github.com/pius706975/golang-test/modules/role"
-	"github.com/pius706975/golang-test/modules/user"
+	_ "github.com/pius706975/golang-boilerplate-with-gin/docs"
+	"github.com/pius706975/golang-boilerplate-with-gin/modules/auth"
+	"github.com/pius706975/golang-boilerplate-with-gin/modules/role"
+	"github.com/pius706975/golang-boilerplate-with-gin/modules/user"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

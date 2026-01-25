@@ -3,10 +3,10 @@ package auth
 import (
 	"time"
 
-	"github.com/pius706975/golang-test/interfaces"
-	"github.com/pius706975/golang-test/middlewares"
-	"github.com/pius706975/golang-test/package/database/models"
-	"github.com/pius706975/golang-test/package/utils"
+	"github.com/pius706975/golang-boilerplate-with-gin/interfaces"
+	"github.com/pius706975/golang-boilerplate-with-gin/middlewares"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/database/models"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -61,7 +61,7 @@ func (service *authService) SignIn(userData *models.User) (gin.H, int) {
 		return gin.H{"status": 500, "message": "Failed to save refresh token"}, 500
 	}
 
-	return gin.H{"data": user, "tokens": tokenResponse{
+	return gin.H{"tokens": tokenResponse{
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 	}}, 200

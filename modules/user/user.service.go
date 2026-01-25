@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/pius706975/golang-test/interfaces"
-	"github.com/pius706975/golang-test/middlewares"
-	"github.com/pius706975/golang-test/package/database/models"
-	"github.com/pius706975/golang-test/package/utils"
+	"github.com/pius706975/golang-boilerplate-with-gin/interfaces"
+	"github.com/pius706975/golang-boilerplate-with-gin/middlewares"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/database/models"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/utils"
 )
 
 type userService struct {
@@ -33,7 +33,6 @@ func (service *userService) SignUp(userData *models.User) (gin.H, int) {
 	userData.Password = hashedPassword
 	userData.OTPCode = otpCode
 	userData.OTPExpiration = time.Now().Add(10 * time.Minute)
-	userData.RoleID = "f4e1855f-80a2-4ee5-a1ec-e80a9a3d3648"
 
 	newData, err := service.repo.SignUp(userData)
 	if err != nil {

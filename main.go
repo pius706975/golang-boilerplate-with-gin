@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/pius706975/golang-test/cmd"
+	"github.com/pius706975/golang-boilerplate-with-gin/cmd"
 	"log"
 	"os"
 )

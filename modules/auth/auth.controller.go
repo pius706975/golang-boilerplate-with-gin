@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"github.com/pius706975/golang-test/interfaces"
-	"github.com/pius706975/golang-test/package/database/models"
+	"github.com/pius706975/golang-boilerplate-with-gin/interfaces"
+	"github.com/pius706975/golang-boilerplate-with-gin/package/database/models"
 
 	"github.com/gin-gonic/gin"
 )

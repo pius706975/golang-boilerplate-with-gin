@@ -1,9 +1,10 @@
-module github.com/pius706975/golang-test
+module github.com/pius706975/golang-boilerplate-with-gin
 
 go 1.24.0
 
 require (
 	github.com/gin-gonic/gin v1.11.0
+	github.com/golang-migrate/migrate/v4 v4.19.1
 	github.com/joho/godotenv v1.5.1
 	github.com/rs/cors v1.11.1
 	github.com/spf13/cobra v1.10.2
@@ -30,6 +31,7 @@ require (
 	github.com/go-openapi/swag/yamlutils v0.25.4 // indirect
 	github.com/goccy/go-yaml v1.19.0 // indirect
 	github.com/kr/text v0.2.0 // indirect
+	github.com/lib/pq v1.10.9 // indirect
 	github.com/quic-go/qpack v0.6.0 // indirect
 	github.com/quic-go/quic-go v0.57.1 // indirect
 	github.com/rogpeppe/go-internal v1.13.1 // indirect

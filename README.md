@@ -110,6 +110,18 @@ swag init
 Make sure you have installed swaggo globally on your computer.
 Read the swaggo documentation [here](https://pkg.go.dev/github.com/swaggo/swag/v2#readme-getting-started)
 
+### Creating Super Admin
+Create a super admin from terminal by running this CLI
+```bash
+  go run . create-superuser --email=<admin email> --name=<admin name> --username=<admin username> --password=<admin password>
+
+  # for example
+
+  go run . create-superuser --email=admin@email.com --name="Admin Pius" --username=admin --password=admin123
+```
+
+*For the --name, use "" if the superuser's name has more than one word.*
+
 ## Folder Structure
 
 Here's a breakdown of the project folder structure:

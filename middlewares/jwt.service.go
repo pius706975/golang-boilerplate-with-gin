@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	envConfig "github.com/pius706975/golang-test/config"
+	envConfig "github.com/pius706975/golang-boilerplate-with-gin/config"
 
 	"github.com/golang-jwt/jwt/v5"
 )
