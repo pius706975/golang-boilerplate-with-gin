@@ -5,7 +5,8 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"strconv"
+	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 )
@@ -14,49 +15,43 @@ var migrationName string
 
 var CreateMigrationCMD = &cobra.Command{
 	Use:   "create-migration",
-	Short: "Generate SQL migration files with version sequence",
+	Short: "Generate SQL migration files using nanosecond timestamp versioning",
 	RunE:  createMigration,
 }
 
 func init() {
-	CreateMigrationCMD.Flags().StringVar(&migrationName, "name", "", "Migration name")
-	CreateMigrationCMD.MarkFlagRequired("name")
+	CreateMigrationCMD.Flags().StringVar(
+		&migrationName,
+		"name",
+		"",
+		"Migration name (can be multiple words)",
+	)
+	_ = CreateMigrationCMD.MarkFlagRequired("name")
 }
 
 func createMigration(cmd *cobra.Command, args []string) error {
 	migrationsDir := "package/database/migrations"
 
-	// check if the directory exists
-	if _, err := os.Stat(migrationsDir); os.IsNotExist(err) {
-		os.MkdirAll(migrationsDir, os.ModePerm)
-	}
-
-	// read the migration files
-	files, err := os.ReadDir(migrationsDir)
-	if err != nil {
+	// ensure migrations directory exists
+	if err := os.MkdirAll(migrationsDir, os.ModePerm); err != nil {
 		return err
 	}
 
-	// find the last version number of the migration files
-	version := 0
-	r := regexp.MustCompile(`^(\d+)_`)
-	for _, f := range files {
-		match := r.FindStringSubmatch(f.Name())
-		if len(match) > 1 {
-			v, _ := strconv.Atoi(match[1])
-			if v > version {
-				version = v
-			}
-		}
-	}
+	// normalize migration name
+	cleanName := normalizeMigrationName(migrationName)
 
-	// increment version number for the new migration file
-	version++
-	versionStr := fmt.Sprintf("%04d", version)
+	// nanosecond-precision timestamp (super safe for teams & CI)
+	version := fmt.Sprintf("%d", time.Now().UnixNano())
 
-	// generate file name
-	upFile := filepath.Join(migrationsDir, fmt.Sprintf("%s_%s.up.sql", versionStr, migrationName))
-	downFile := filepath.Join(migrationsDir, fmt.Sprintf("%s_%s.down.sql", versionStr, migrationName))
+	upFile := filepath.Join(
+		migrationsDir,
+		fmt.Sprintf("%s_%s.up.sql", version, cleanName),
+	)
+
+	downFile := filepath.Join(
+		migrationsDir,
+		fmt.Sprintf("%s_%s.down.sql", version, cleanName),
+	)
 
 	upContent := "-- +++ UP migration +++\n\n"
 	downContent := "-- +++ DOWN migration +++\n\n"
@@ -64,6 +59,7 @@ func createMigration(cmd *cobra.Command, args []string) error {
 	if err := os.WriteFile(upFile, []byte(upContent), 0644); err != nil {
 		return err
 	}
+
 	if err := os.WriteFile(downFile, []byte(downContent), 0644); err != nil {
 		return err
 	}
@@ -71,5 +67,20 @@ func createMigration(cmd *cobra.Command, args []string) error {
 	fmt.Println("Migration files created:")
 	fmt.Println(upFile)
 	fmt.Println(downFile)
+
 	return nil
+}
+
+func normalizeMigrationName(name string) string {
+	name = strings.ToLower(strings.TrimSpace(name))
+
+	name = strings.ReplaceAll(name, " ", "_")
+
+	re := regexp.MustCompile(`[^a-z0-9_]+`)
+	name = re.ReplaceAllString(name, "")
+
+	reUnderscore := regexp.MustCompile(`_+`)
+	name = reUnderscore.ReplaceAllString(name, "_")
+
+	return name
 }
